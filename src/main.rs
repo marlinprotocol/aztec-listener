@@ -1,5 +1,5 @@
-use std::env;
 use dotenv::dotenv;
+use std::env;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -22,8 +22,8 @@ async fn main() -> std::io::Result<()> {
             "0x103e9C0e8E0A745A41F8A52142F452E7f8fAaCAd".into(),
             1,
             987,
-            format!("http://localhost:{}/", port_clone),
-            format!("http://localhost:{}/", port_clone),
+            format!("http://localhost:{}/api/getProof", port_clone),
+            format!("http://localhost:{}", port_clone),
             false,
             2,
         );

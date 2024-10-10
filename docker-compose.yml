@@ -5,17 +5,16 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: aztec_listener_container
+    env_file:
+      - .env 
     environment:
-      GENERATOR_ADDRESS: "generator address here"
-      GAS_KEY: "gas key here"
-      MARKET_ID: "market id"
-      HTTP_RPC_URL: "http rpc url"
-      PROOF_MARKETPLACE_ADDRESS: "proof market place address"
-      GENERATOR_REGISTRY_ADDRESS: "generator registry address"
-      START_BLOCK: "block number from from which listener should start"
-      CHAIN_ID: "chain id"
-      MAX_PARALLEL_PROOFS: "max parallel proofs to control loads"
-      IVS_URL: "input verification enclave end point"
+      MARKET_ID: "8"
+      CHAIN_ID: "421614"
+      PROOF_MARKETPLACE_ADDRESS: "0x0b6340a893B944BDc3B4F012e934b724c83abF97"
+      GENERATOR_REGISTRY_ADDRESS: "0x5ce3e1010028C4F5687356D721e3e2B6DcEA7C25"
+      START_BLOCK: "87455947"
+      MAX_PARALLEL_PROOFS: "1" # one for now, one large machine more
+      IVS_URL: "http://stateless-prover:8001/checkInput" #set this to same as stateless-prover now, which change latter once enclave is complete
       PROVER_URL: "http://stateless-prover:8001" #set this to same as stateless-prover now, which change latter
     depends_on:
       - stateless-prover

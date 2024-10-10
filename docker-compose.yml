@@ -15,7 +15,7 @@ services:
       START_BLOCK: "87455947"
       MAX_PARALLEL_PROOFS: "1" # one for now, one large machine more
       IVS_URL: "http://stateless-prover:8001" #set this to same as stateless-prover now, which change latter once enclave is complete
-      PROVER_URL: "http://stateless-prover:8001" #set this to same as stateless-prover now, which change latter
+      PROVER_URL: "http://stateless-prover:8001/api/getProof" #set this to same as stateless-prover now, which change latter
     depends_on:
       - stateless-prover
     restart: unless-stopped 

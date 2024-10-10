@@ -1,0 +1,30 @@
+name: aztec-stateless-prover
+services:
+  request-listener:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aztec_listener_container
+    environment:
+      GENERATOR_ADDRESS: "generator address here"
+      GAS_KEY: "gas key here"
+      MARKET_ID: "market id"
+      HTTP_RPC_URL: "http rpc url"
+      PROOF_MARKETPLACE_ADDRESS: "proof market place address"
+      GENERATOR_REGISTRY_ADDRESS: "generator registry address"
+      START_BLOCK: "block number from from which listener should start"
+      CHAIN_ID: "chain id"
+      MAX_PARALLEL_PROOFS: "max parallel proofs to control loads"
+      IVS_URL: "input verification enclave end point"
+      PROVER_URL: "http://stateless-prover:8001" #set this to same as stateless-prover now, which change latter
+    depends_on:
+      - stateless-prover
+    restart: unless-stopped 
+  stateless-prover:
+    image: "aztecprotocol/aztec" #use the custom image provided by, if default one is used, it will fail
+    volumes:
+      - ./log/aztec-prover-agent/:/usr/src/yarn-project/aztec/log:rw
+      - ./cache/bb-crs/:/root/.bb-crs:rw
+      - ./workdir/bb-prover/:/usr/src/yarn-project/bb:rw
+    command: [ "start", "--kalypso" ]
+    restart: on-failure:5

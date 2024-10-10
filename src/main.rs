@@ -1,31 +1,46 @@
 use dotenv::dotenv;
-use std::env;
+
+macro_rules! env_var {
+    ($var:ident, $key:expr) => {
+        let $var = std::env::var($key).expect(&format!("{} is not set", $key));
+    };
+}
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-    let port: u16 = 9003;
-    let port_clone = port.clone().to_string();
+    env_var!(generator, "GENERATOR_ADDRESS");
+    env_var!(gas_key, "GAS_KEY");
+    env_var!(market_id, "MARKET_ID");
+    env_var!(http_rpc_url, "HTTP_RPC_URL");
+    env_var!(proof_market_place, "PROOF_MARKETPLACE_ADDRESS");
+    env_var!(generator_registry, "GENERATOR_REGISTRY_ADDRESS");
+    env_var!(start_block, "START_BLOCK");
+    env_var!(chain_id, "CHAIN_ID");
+    env_var!(max_parallel_proofs, "MAX_PARALLEL_PROOFS");
+    env_var!(ivs_url, "IVS_URL");
+    env_var!(prover_url, "PROVER_URL");
 
-    let generator_address = env::var("GENERATOR").expect("GENERATOR is not set");
-    let gas_key = env::var("GAS_KEY").expect("GAS_KEY is not set");
+    let start_block = start_block.parse().expect("Can not parse start_block");
+    let chain_id = chain_id.parse().expect("Can not parse chain _id");
+    let max_parallel_proofs = max_parallel_proofs.parse().unwrap_or_else(|_| 1);
 
     let listener =
         kalypso_listener::job_creator::JobCreator::simple_listener_for_non_confidential_prover(
-            generator_address,
-            "1".into(),
-            "http://88.99.141.248:8545".into(),
+            generator,
+            market_id.into(),
+            http_rpc_url.into(),
             gas_key,
-            "0x6441dcD0f88f70E912A873baaeC5d02e564Ebc78".into(),
-            "0x103e9C0e8E0A745A41F8A52142F452E7f8fAaCAd".into(),
-            1,
-            987,
-            format!("http://localhost:{}/api/getProof", port_clone),
-            format!("http://localhost:{}", port_clone),
+            proof_market_place.into(),
+            generator_registry.into(),
+            start_block,
+            chain_id,
+            prover_url,
+            ivs_url,
             false,
-            2,
+            max_parallel_proofs,
         );
 
     let _ = listener.run().await;
